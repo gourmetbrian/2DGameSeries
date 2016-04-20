@@ -12,12 +12,14 @@ public class InputHandler implements KeyListener{
 	}
 	
 	public class Key {
+		private int numTimesPressed = 0;
 		private boolean pressed = false;
 		public boolean isPressed(){
 			return pressed;
 		} 
 		public void toggle(boolean isPressed) {
 			pressed = isPressed;
+			if (isPressed) numTimesPressed++;
 	}
 	}
 	
