@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+/.settings/
+.classpath/
+.DS_Store/
+/.recommenders/
+=======
 /.recommenders/
 .DS_Store
+>>>>>>> af05fdaf8c92c0f86a7583b8d6c95b2fd5e804c7
 /.metadata/
