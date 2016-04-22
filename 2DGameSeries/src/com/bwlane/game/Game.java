@@ -13,6 +13,7 @@ import java.awt.image.DataBufferInt;
 import javax.swing.JFrame;
 
 import com.bwlane.game.gfx.Colors;
+import com.bwlane.game.gfx.Font;
 import com.bwlane.game.gfx.Screen;
 import com.bwlane.game.gfx.SpriteSheet;
 
@@ -165,6 +166,8 @@ public class Game extends Canvas implements Runnable {
 						Colors.get(555, 505, 055, 550), flipX, flipY);
 			}
 		}
+		String msg = "This is our game!";
+		Font.render(msg, screen, screen.xOffset + screen.width / 2 - (msg.length() * 8 / 2), screen.yOffset + screen.height / 2, Colors.get(-1, -1, -1, 000));
 		
 		for (int y = 0; y < screen.height; y++) {
 			for (int x = 0; x < screen.width; x++) {
