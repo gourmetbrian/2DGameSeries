@@ -12,6 +12,8 @@ import java.awt.image.DataBufferInt;
 
 import javax.swing.JFrame;
 
+import com.bwlane.game.gfx.Colors;
+import com.bwlane.game.gfx.Font;
 import com.bwlane.game.gfx.Screen;
 import com.bwlane.game.gfx.SpriteSheet;
 
@@ -21,7 +23,7 @@ public class Game extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
 	public static final int WIDTH = 160;
-	public static final int HEIGHT = WIDTH/12*9;
+	public static final int HEIGHT = WIDTH / 12 * 9;
 	public static final int SCALE = 3;
 	public static final String NAME = "Game";
 	
@@ -32,7 +34,8 @@ public class Game extends Canvas implements Runnable {
 	
 	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 	private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-	
+	public int[] colors = new int[6 * 6 * 6];
+
 	private Screen screen;
 	public InputHandler input;
 	
@@ -56,6 +59,19 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public void init(){
+		int index = 0;
+		for (int r = 0; r < 6; r++) {
+			for (int g = 0; g < 6; g++) {
+				for (int b = 0; b < 6; b++) {
+					int rr = (r * 255 / 5);
+					int gg = (g * 255 / 5);
+					int bb = (b * 255 / 5);
+
+					
+					colors[index++] = rr << 16 | gg << 8 | bb;
+				}
+			}
+		}
 		screen = new Screen (WIDTH, HEIGHT, new SpriteSheet("/sprite_sheet.png"));
 		input = new InputHandler(this);
 	}
@@ -74,12 +90,10 @@ public class Game extends Canvas implements Runnable {
 	@Override
 	public void run() {
 		long lastTime= System.nanoTime();
-		double nsPerTick = 1000000000D/60D;
-		
+		long lastTimer = System.currentTimeMillis();
+		double nsPerTick = 1000000000D/60D;		
 		int ticks = 0;
 		int frames = 0;
-		
-		long lastTimer = System.currentTimeMillis();
 		double delta = 0;
 		
 		init();
@@ -144,8 +158,24 @@ public class Game extends Canvas implements Runnable {
 			return;
 		}
 		
-		screen.render(pixels,  0, WIDTH);
+		for (int y = 0; y < 32; y++) {
+			for (int x = 0; x < 32; x++) {
+				boolean flipX = x % 2 == 1;
+				boolean flipY = y % 2 == 1;
+				screen.render(x << 3, y << 3, 0, 
+						Colors.get(555, 505, 055, 550), flipX, flipY);
+			}
+		}
+		String msg = "This is our game!";
+		Font.render(msg, screen, screen.xOffset + screen.width / 2 - (msg.length() * 8 / 2), screen.yOffset + screen.height / 2, Colors.get(-1, -1, -1, 000));
 		
+		for (int y = 0; y < screen.height; y++) {
+			for (int x = 0; x < screen.width; x++) {
+				int colorCode = screen.pixels[x + y * screen.width];
+				if (colorCode < 255) pixels[x + y * WIDTH] = colors[colorCode];
+			}
+		}
+						
 		Graphics g = bs.getDrawGraphics();
 		
 		g.setColor(Color.BLACK);
